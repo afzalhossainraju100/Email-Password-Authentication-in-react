@@ -4,7 +4,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../Firebase/firebase.init";
 import { useState } from "react";
 import { useRef } from "react";
-import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import { sendPasswordResetEmail } from "firebase/auth";
 
 const Login = () => {
   const [error, setError] = useState("");
