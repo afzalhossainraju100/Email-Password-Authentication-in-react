@@ -5,6 +5,7 @@ import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { IoEyeOff } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import { sendEmailVerification } from "firebase/auth";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,7 +24,6 @@ const Register = () => {
     const Terms = e.target.terms.checked;
     console.log("register", Email, Password, Terms);
 
-
     //reset success
     setSuccess(false);
     //reset error
@@ -34,18 +34,27 @@ const Register = () => {
       return;
     }
 
-    const passwordPattern =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).{8,}$/;
-    if (!passwordPattern.test(Password)) {
-      setError("Password must be at least 6 characters long");
-      return;
-    }
+    // const passwordPattern =
+    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).{8,}$/;
+    // if (!passwordPattern.test(Password)) {
+    //   setError("Password must be at least 6 characters long");
+    //   return;
+    // }
 
     createUserWithEmailAndPassword(auth, Email, Password)
       .then((result) => {
         const user = result.user;
         console.log("created user", user);
         setSuccess(true);
+        e.target.reset();
+        //send verification email
+        sendEmailVerification(user)
+          .then(() => {
+            alert("Please check your email for verification");
+          })
+          .catch((error) => {
+            console.error("verification error", error);
+          });
       })
       .catch((error) => {
         console.error("error", error);
@@ -113,7 +122,12 @@ const Register = () => {
                   )}
                 </fieldset>
               </form>
-              <p>Already have an account? <Link to="/login" className="text-blue-500 underline">Login</Link></p>
+              <p>
+                Already have an account?{" "}
+                <Link to="/login" className="text-blue-500 underline">
+                  Login
+                </Link>
+              </p>
             </div>
           </div>
         </div>
